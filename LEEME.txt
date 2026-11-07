@@ -1,0 +1,22 @@
+YENIFER BOLAÑOS NAILART · AGENDA OFFLINE
+
+ARCHIVOS:
+- index.html: aplicación
+- manifest.json: datos de instalación PWA
+- sw.js: caché para uso sin conexión
+- icon-192.png e icon-512.png: iconos
+
+PUBLICACIÓN E INSTALACIÓN:
+1. Extrae este ZIP.
+2. Sube TODOS los archivos y ambos iconos a la raíz (root) de un repositorio público de GitHub.
+3. En Settings > Pages selecciona Deploy from a branch, rama main y carpeta /(root), y guarda.
+4. Espera a que GitHub Pages publique el sitio. Abre la URL HTTPS en Chrome Android estando conectada a internet una primera vez.
+5. Espera a que cargue por completo. Usa el botón "Instalar aplicación" si aparece, o menú de Chrome > Instalar aplicación / Añadir a pantalla principal.
+6. Abre la aplicación instalada una vez más con internet para que el service worker guarde los archivos. Después podrá abrirse sin internet.
+
+IMPORTANTE:
+- La instalación PWA requiere que la app esté publicada en HTTPS (por ejemplo GitHub Pages). Abrir index.html directamente desde el ZIP no permite instalarla como aplicación.
+- Para el primer uso y la primera carga offline, se necesita internet. Después de que se haya cargado y almacenado, las pantallas y los datos guardados funcionan sin conexión.
+- Los datos se guardan en el almacenamiento del navegador/dispositivo. No borres los datos del sitio ni desinstales sin exportar antes una copia desde Ajustes.
+- Los recordatorios de WhatsApp necesitan internet para abrir WhatsApp y enviar el mensaje.
+- Los precios iniciales de los servicios y adicionales quedan en cero; cámbialos en Servicios y precios.

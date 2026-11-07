@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7b8cc">
+<meta name="description" content="Agenda offline para Yenifer Bolaños Nailart">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>Yenifer Bolaños Nailart · Agenda</title>
+<style>
+:root{--pink:#f7b8cc;--pink2:#ffe6ee;--deep:#b94f76;--gold:#c18a45;--ink:#55313e;--bg:#fff8fa;--line:#f0cbd7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:18px 16px 14px;text-align:center;background:linear-gradient(135deg,#ffeaf0,#f7b8cc);border-bottom:2px solid #d8a45e}
+.brand{font-family:Georgia,serif;font-style:italic;font-size:clamp(26px,7vw,38px);font-weight:bold;color:#8b3e58;text-shadow:1px 1px #fff}
+.sub{letter-spacing:3px;color:#a34b6a;font-size:12px}.crown{color:#bd8741;font-size:24px}
+nav{display:flex;gap:7px;padding:10px;overflow:auto;background:#fff;position:sticky;top:0;z-index:3;border-bottom:1px solid var(--line)}
+nav button{flex:1;min-width:max-content;border:1px solid var(--line);background:#fff1f5;color:var(--deep);padding:10px 13px;border-radius:22px;font-weight:700}
+nav button.active{background:var(--deep);color:white}
+main{max-width:850px;margin:auto;padding:14px}
+.panel{display:none}.panel.active{display:block}
+.card{background:white;border:1px solid var(--line);border-radius:17px;padding:15px;margin:0 0 13px;box-shadow:0 3px 12px #9b49600c}
+h2{font-family:Georgia,serif;color:var(--deep);margin:4px 0 14px}h3{margin:4px 0 10px;color:#9c4965}
+label{display:block;font-size:13px;font-weight:700;margin:9px 0 4px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #e6c3cf;border-radius:10px;background:#fffdfd;color:#49303a;font:inherit}
+textarea{min-height:75px} .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+button{cursor:pointer}.btn{border:0;border-radius:11px;padding:11px 14px;background:var(--deep);color:white;font-weight:700;margin:6px 4px 2px 0}
+.btn.secondary{background:#fbe5ed;color:#8f3e5d;border:1px solid var(--line)}
+.btn.gold{background:#b78343}.btn.danger{background:#a43f50}.btn.small{padding:7px 10px;font-size:13px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+.service-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.choice{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fff9fb}
+.choice input{width:auto}.choice span{flex:1}.muted{color:#8d6c79;font-size:13px}
+.total{font-size:22px;font-weight:800;color:var(--deep)}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;background:#fffafb}
+.item strong{color:#8d3d5c}.tag{display:inline-block;border-radius:20px;padding:4px 9px;background:#fbe5ed;color:#8e4560;font-size:12px}
+.breakdown{display:grid;grid-template-columns:1fr auto;gap:7px;border-top:1px dashed var(--line);padding-top:9px;margin-top:9px}
+hr{border:0;border-top:1px solid var(--line);margin:13px 0}
+small{color:#8b6c78}
+@media(max-width:520px){.grid{grid-template-columns:1fr 1fr}.service-list{grid-template-columns:1fr}main{padding:10px}}
+</style>
+</head>
+<body>
+<header><div class="crown">♕</div><div class="brand">Yenifer Bolaños</div><div class="sub">NAILART · AGENDA</div></header>
+<nav>
+<button class="active" data-tab="agenda">Citas</button>
+<button data-tab="services">Servicios y precios</button>
+<button data-tab="reports">Ganancias</button>
+<button data-tab="settings">Ajustes</button>
+</nav>
+<main>
+<section id="agenda" class="panel active">
+ <div class="card"><h2>Nueva cita</h2>
+  <div class="grid">
+   <div><label>Nombre de la clienta</label><input id="client" placeholder="Nombre completo"></div>
+   <div><label>Teléfono / WhatsApp</label><input id="phone" inputmode="tel" placeholder="Ej. 3001234567"></div>
+   <div><label>Fecha</label><input id="date" type="date"></div>
+   <div><label>Hora de inicio</label><input id="start" type="time"></div>
+   <div><label>Hora de finalización</label><input id="end" type="time"></div>
+   <div><label>Nota (opcional)</label><input id="note" placeholder="Observaciones"></div>
+  </div>
+  <h3>Selecciona uno o varios servicios</h3><div id="serviceChoices" class="service-list"></div>
+  <h3>Adicionales</h3><div id="extraChoices" class="service-list"></div>
+  <label>Otros gastos de esta cita ($)</label><input id="costExtra" type="number" min="0" value="0">
+  <label>Detalle de gastos (opcional)</label><input id="costNote" placeholder="Ej. decoración, material extra">
+  <hr><div class="row"><span>Total de la cita</span><span class="total" id="liveTotal">$0</span></div>
+  <button class="btn" id="saveAppointment">Guardar cita</button>
+  <button class="btn secondary" id="clearForm">Limpiar</button>
+ </div>
+ <div class="card"><h2>Mis citas</h2>
+  <div class="row"><button class="btn secondary small filter active" data-filter="Agendada">Agendadas</button><button class="btn secondary small filter" data-filter="Realizada">Realizadas</button><button class="btn secondary small filter" data-filter="Cancelada">Canceladas</button><button class="btn secondary small filter" data-filter="Todas">Todas</button></div>
+  <div id="appointments"></div>
+ </div>
+</section>
+<section id="services" class="panel">
+ <div class="card"><h2>Servicios y precios</h2><p class="muted">Registra cada servicio una sola vez. Al elegirlo en una cita, el precio se agrega automáticamente. Puedes editarlo cuando quieras.</p>
+  <div class="grid"><div><label>Nombre del servicio</label><input id="newService" placeholder="Ej. Soft Gel"></div><div><label>Precio ($)</label><input id="newServicePrice" type="number" min="0" value="0"></div></div>
+  <button class="btn" id="addService">Agregar servicio</button><div id="serviceManager"></div>
+ </div>
+ <div class="card"><h2>Adicionales y precios</h2><div class="grid"><div><label>Nombre del adicional</label><input id="newExtra" placeholder="Ej. Efectos"></div><div><label>Precio ($)</label><input id="newExtraPrice" type="number" min="0" value="0"></div></div>
+ <button class="btn" id="addExtra">Agregar adicional</button><div id="extraManager"></div></div>
+</section>
+<section id="reports" class="panel">
+ <div class="card"><h2>Desglose de ganancias</h2><p class="muted">El cálculo se hace con las citas marcadas como realizadas. Los porcentajes y valores se pueden cambiar en Ajustes.</p>
+ <div class="grid"><div><label>Desde</label><input type="date" id="reportFrom"></div><div><label>Hasta</label><input type="date" id="reportTo"></div></div>
+ <button class="btn" id="refreshReport">Actualizar</button><div id="reportResult"></div></div>
+</section>
+<section id="settings" class="panel">
+ <div class="card"><h2>Porcentajes y valores</h2>
+  <div class="grid">
+   <div><label>Reinversión (%)</label><input id="reinvestPct" type="number" min="0" max="100" step=".1"></div>
+   <div><label>Gastos generales (%)</label><input id="expensePct" type="number" min="0" max="100" step=".1"></div>
+   <div><label>Niñera por cita ($)</label><input id="babysitter" type="number" min="0"></div>
+   <div><label>Otros gastos por defecto ($)</label><input id="defaultCost" type="number" min="0"></div>
+  </div>
+  <p class="muted">La ganancia neta se calcula después de restar reinversión, gastos, niñera y gastos anotados. Configura aquí tus porcentajes.</p>
+  <button class="btn" id="saveSettings">Guardar ajustes</button>
+ </div>
+ <div class="card"><h2>Respaldo de mis datos</h2><p class="muted">Guarda una copia de tus citas, servicios y ajustes. Los datos permanecen en este dispositivo.</p>
+ <button class="btn secondary" id="exportData">Descargar copia de seguridad</button>
+ <label>Restaurar copia JSON</label><input type="file" id="importData" accept=".json,application/json">
+ <button class="btn danger" id="clearAll">Borrar todos los datos</button></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id), money=n=>new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Number(n)||0);
+const today=()=>new Date().toISOString().slice(0,10);
+let db=JSON.parse(localStorage.getItem('yeniferNailartDB')||'null')||{
+ services:[{name:'Semipermanente',price:0},{name:'Rubber',price:0},{name:'Soft Gel',price:0},{name:'Polygel',price:0},{name:'Retoque',price:0}],
+ extras:[{name:'Decoración',price:0},{name:'Efectos',price:0},{name:'Diseño',price:0}],
+ settings:{reinvestPct:0,expensePct:10,babysitter:0,defaultCost:0},appointments:[]
+};
+let currentFilter='Agendada';
+function persist(){localStorage.setItem('yeniferNailartDB',JSON.stringify(db));}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function selectedTotal(){let a=[...document.querySelectorAll('[data-pick="service"]:checked')].reduce((s,e)=>s+Number(e.dataset.price),0);let b=[...document.querySelectorAll('[data-pick="extra"]:checked')].reduce((s,e)=>s+Number(e.dataset.price),0);return a+b;}
+function updateTotal(){$('liveTotal').textContent=money(selectedTotal());}
+function renderChoices(){
+ $('serviceChoices').innerHTML=db.services.map((s,i)=>`<label class="choice"><input type="checkbox" data-pick="service" data-index="${i}" data-price="${Number(s.price)||0}"><span>${esc(s.name)}<br><small>${money(s.price)}</small></span></label>`).join('')||'<small>Agrega servicios en Servicios y precios.</small>';
+ $('extraChoices').innerHTML=db.extras.map((s,i)=>`<label class="choice"><input type="checkbox" data-pick="extra" data-index="${i}" data-price="${Number(s.price)||0}"><span>${esc(s.name)}<br><small>${money(s.price)}</small></span></label>`).join('')||'<small>No hay adicionales.</small>';
+ document.querySelectorAll('[data-pick]').forEach(e=>e.addEventListener('change',updateTotal));updateTotal();
+}
+function renderManagers(){
+ $('serviceManager').innerHTML=db.services.map((s,i)=>`<div class="item"><div class="grid"><div><label>Servicio</label><input data-edit="service-name" data-i="${i}" value="${esc(s.name)}"></div><div><label>Precio ($)</label><input data-edit="service-price" data-i="${i}" type="number" min="0" value="${Number(s.price)||0}"></div></div><button class="btn small" data-save-service="${i}">Guardar</button> <button class="btn danger small" data-del-service="${i}">Eliminar</button></div>`).join('');
+ $('extraManager').innerHTML=db.extras.map((s,i)=>`<div class="item"><div class="grid"><div><label>Adicional</label><input data-edit="extra-name" data-i="${i}" value="${esc(s.name)}"></div><div><label>Precio ($)</label><input data-edit="extra-price" data-i="${i}" type="number" min="0" value="${Number(s.price)||0}"></div></div><button class="btn small" data-save-extra="${i}">Guardar</button> <button class="btn danger small" data-del-extra="${i}">Eliminar</button></div>`).join('');
+}
+function breakdown(a){
+ const total=Number(a.total)||0, reinvest=total*db.settings.reinvestPct/100, expenses=total*db.settings.expensePct/100;
+ const babysitter=Number(db.settings.babysitter)||0, costs=(Number(a.costExtra)||0)+(Number(db.settings.defaultCost)||0);
+ return {total,reinvest,expenses,babysitter,costs,profit:total-reinvest-expenses-babysitter-costs};
+}
+function renderAppointments(){
+ const list=db.appointments.filter(a=>currentFilter==='Todas'||a.status===currentFilter).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+ $('appointments').innerHTML=list.map(a=>{let b=breakdown(a);return `<div class="item"><div class="row"><strong>${esc(a.client)}</strong><span class="tag">${a.status}</span></div><div>${esc(a.date)} · ${esc(a.start)}–${esc(a.end)}</div><div class="muted">${esc(a.services.join(', '))}${a.extras.length?' + '+esc(a.extras.join(', ')):''}</div><div class="total">${money(a.total)}</div><small>Ganancia estimada: ${money(b.profit)}</small><div class="row"><button class="btn secondary small" data-wa="${a.id}">WhatsApp</button>${a.status!=='Realizada'?`<button class="btn small" data-done="${a.id}">Realizada</button>`:''}${a.status!=='Cancelada'?`<button class="btn danger small" data-cancel="${a.id}">Cancelar</button>`:''}<button class="btn secondary small" data-delete="${a.id}">Eliminar</button></div></div>`}).join('')||'<p class="muted">No hay citas en esta sección.</p>';
+}
+function message(a){return `Hola ${a.client} 💗 Te recuerdo tu cita en Yenifer Bolaños Nailart:\nFecha: ${a.date}\nHora: ${a.start} a ${a.end}\nServicios: ${a.services.join(', ')}\nAdicionales: ${a.extras.join(', ')||'Ninguno'}\nTotal: ${money(a.total)}\n\nTe agradezco llegar puntual. Tenemos máximo 5 minutos de espera, por respeto al tiempo de la siguiente clienta. Si necesitas confirmar o modificar tu cita, respóndeme por aquí. ¡Gracias! 🌸`;}
+function renderReport(){
+ const from=$('reportFrom').value,to=$('reportTo').value;
+ const arr=db.appointments.filter(a=>a.status==='Realizada'&&(!from||a.date>=from)&&(!to||a.date<=to));
+ let sums={total:0,reinvest:0,expenses:0,babysitter:0,costs:0,profit:0};arr.forEach(a=>{let b=breakdown(a);Object.keys(sums).forEach(k=>sums[k]+=b[k]);});
+ $('reportResult').innerHTML=`<p><b>${arr.length}</b> citas realizadas</p><div class="breakdown">${[['Ingresos',sums.total],['Reinversión',sums.reinvest],['Gastos generales',sums.expenses],['Niñera',sums.babysitter],['Gastos anotados y por defecto',sums.costs],['GANANCIA NETA',sums.profit]].map(([k,v])=>`<b>${k}</b><b>${money(v)}</b>`).join('')}</div>`;
+}
+function renderSettings(){Object.keys(db.settings).forEach(k=>$(k).value=db.settings[k]);}
+function refresh(){persist();renderChoices();renderManagers();renderAppointments();renderSettings();renderReport();}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));}));
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{currentFilter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));renderAppointments();}));
+$('date').value=today();
+$('addService').onclick=()=>{let n=$('newService').value.trim(),p=Number($('newServicePrice').value);if(!n)return alert('Escribe el nombre del servicio.');db.services.push({name:n,price:p||0});$('newService').value='';$('newServicePrice').value=0;refresh();};
+$('addExtra').onclick=()=>{let n=$('newExtra').value.trim(),p=Number($('newExtraPrice').value);if(!n)return alert('Escribe el nombre del adicional.');db.extras.push({name:n,price:p||0});$('newExtra').value='';$('newExtraPrice').value=0;refresh();};
+document.addEventListener('click',e=>{
+ let t=e.target;
+ if(t.dataset.saveService!==undefined||t.dataset.saveExtra!==undefined){let type=t.dataset.saveService!==undefined?'service':'extra',i=Number(t.dataset.saveService??t.dataset.saveExtra),arr=type==='service'?db.services:db.extras;arr[i].name=document.querySelector(`[data-edit="${type}-name"][data-i="${i}"]`).value.trim()||arr[i].name;arr[i].price=Math.max(0,Number(document.querySelector(`[data-edit="${type}-price"][data-i="${i}"]`).value)||0);refresh();}
+ if(t.dataset.delService!==undefined||t.dataset.delExtra!==undefined){let type=t.dataset.delService!==undefined?'service':'extra',i=Number(t.dataset.delService??t.dataset.delExtra);if(confirm('¿Eliminar este elemento?')){(type==='service'?db.services:db.extras).splice(i,1);refresh();}}
+ if(t.dataset.wa){let a=db.appointments.find(x=>x.id===t.dataset.wa);let phone=(a.phone||'').replace(/\D/g,'');let url='https://wa.me/'+(phone?('57'+phone):'')+'?text='+encodeURIComponent(message(a));window.open(url,'_blank');}
+ if(t.dataset.done){let a=db.appointments.find(x=>x.id===t.dataset.done);a.status='Realizada';refresh();}
+ if(t.dataset.cancel){let a=db.appointments.find(x=>x.id===t.dataset.cancel);a.status='Cancelada';refresh();}
+ if(t.dataset.delete){if(confirm('¿Eliminar esta cita definitivamente?')){db.appointments=db.appointments.filter(x=>x.id!==t.dataset.delete);refresh();}}
+});
+$('saveAppointment').onclick=()=>{
+ let client=$('client').value.trim(),date=$('date').value,start=$('start').value,end=$('end').value;
+ let ss=[...document.querySelectorAll('[data-pick="service"]:checked')],ee=[...document.querySelectorAll('[data-pick="extra"]:checked')];
+ if(!client||!date||!start||!end||(!ss.length&&!ee.length))return alert('Completa nombre, fecha, horas y selecciona al menos un servicio o adicional.');
+ if(end<=start)return alert('La hora de finalización debe ser posterior a la hora de inicio.');
+ let services=ss.map(e=>db.services[Number(e.dataset.index)]),extras=ee.map(e=>db.extras[Number(e.dataset.index)]);
+ let a={id:String(Date.now()),client,phone:$('phone').value.trim(),date,start,end,note:$('note').value.trim(),services:services.map(x=>x.name),extras:extras.map(x=>x.name),total:services.reduce((s,x)=>s+Number(x.price),0)+extras.reduce((s,x)=>s+Number(x.price),0),costExtra:Number($('costExtra').value)||0,costNote:$('costNote').value.trim(),status:'Agendada'};
+ db.appointments.push(a);refresh();$('clearForm').click();alert('¡Cita guardada! Puedes enviar el recordatorio por WhatsApp desde la lista de citas.');
+};
+$('clearForm').onclick=()=>{['client','phone','start','end','note','costNote'].forEach(id=>$(id).value='');$('date').value=today();$('costExtra').value=0;document.querySelectorAll('[data-pick]').forEach(x=>x.checked=false);updateTotal();};
+$('saveSettings').onclick=()=>{db.settings={reinvestPct:Math.max(0,Number($('reinvestPct').value)||0),expensePct:Math.max(0,Number($('expensePct').value)||0),babysitter:Math.max(0,Number($('babysitter').value)||0),defaultCost:Math.max(0,Number($('defaultCost').value)||0)};persist();renderAppointments();renderReport();alert('Ajustes guardados.');};
+$('refreshReport').onclick=renderReport;
+$('exportData').onclick=()=>{let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='respaldo-yenifer-nailart.json';a.click();URL.revokeObjectURL(u);};
+$('importData').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!d.services||!d.appointments||!d.settings)throw Error();db=d;refresh();alert('Respaldo restaurado.');}catch(_){alert('El archivo no parece ser un respaldo válido.');}};
+$('clearAll').onclick=()=>{if(confirm('Esto borrará citas, servicios y ajustes guardados en este dispositivo. ¿Continuar?')){localStorage.removeItem('yeniferNailartDB');location.reload();}};
+refresh();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;let b=document.createElement('button');b.className='btn gold';b.textContent='Instalar aplicación';b.style.margin='12px auto';b.style.display='block';document.querySelector('header').appendChild(b);b.onclick=async()=>{deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;b.remove();};});
+</script>
+</body></html>
